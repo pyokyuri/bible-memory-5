@@ -1,0 +1,1746 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>물댄동산교회 48일 성경 암송 (9/28 ~ 11/14)</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Nanum Myeongjo for Bible scripture, Inter / Pretendard for clean modern UI -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            eden: {
+              50: '#f4f8f5',
+              100: '#e5f0e8',
+              200: '#cce1d2',
+              300: '#a3c9ae',
+              400: '#73aa84',
+              500: '#4e8d62',
+              600: '#3c714d',
+              700: '#325b3f',
+              800: '#2b4935',
+              900: '#243d2d',
+            },
+            parchment: {
+              50: '#fdfbf7',
+              100: '#f7f4ed',
+              200: '#efe9dc',
+              300: '#dfd4c1',
+              400: '#cabb9e',
+            },
+            gold: {
+              400: '#fbbf24',
+              500: '#f59e0b',
+              600: '#d97706',
+            }
+          },
+          fontFamily: {
+            myeongjo: ['"Nanum Myeongjo"', 'serif'],
+            sans: ['Pretendard', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+          },
+          animation: {
+            'pulse-subtle': 'pulse 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'shimmer': 'shimmer 2s linear infinite',
+          },
+          keyframes: {
+            shimmer: {
+              '0%': { backgroundPosition: '-200% 0' },
+              '100%': { backgroundPosition: '200% 0' }
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    /* Smooth scroll behavior & custom scrollbar */
+    html { scroll-behavior: smooth; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #f7f4ed; }
+    ::-webkit-scrollbar-thumb { background: #cce1d2; border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #a3c9ae; }
+
+    .glow-gold {
+      box-shadow: 0 0 15px -2px rgba(245, 158, 11, 0.45);
+    }
+    .badge-today {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    }
+    .water-gradient {
+      background: linear-gradient(135deg, #2b4935 0%, #3c714d 60%, #4e8d62 100%);
+    }
+    .verse-card-paper {
+      background: linear-gradient(180deg, #ffffff 0%, #fdfbf7 100%);
+      box-shadow: 0 4px 20px -2px rgba(43, 73, 53, 0.08);
+    }
+    .typing-correct { color: #15803d; background-color: #dcfce7; }
+    .typing-incorrect { color: #b91c1c; background-color: #fee2e2; }
+    .typing-pending { color: #9ca3af; }
+    .toast-transition {
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+    }
+  </style>
+</head>
+<body class="bg-parchment-100 font-sans text-stone-800 min-h-screen flex flex-col antialiased selection:bg-eden-200">
+
+  <!-- Top Application Bar -->
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-eden-100 shadow-sm">
+    <div class="max-w-4xl mx-auto px-4 py-2.5 flex items-center justify-between">
+      <div class="flex items-center space-x-2.5">
+        <div class="w-9 h-9 rounded-xl water-gradient flex items-center justify-center text-white shadow-sm">
+          <i data-lucide="book-open" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <div class="flex items-center space-x-1.5">
+            <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-eden-100 text-eden-800" id="headerDeptTag">물댄동산교회</span>
+            <span class="text-xs text-stone-500 font-medium" id="headerNameTag">성도님</span>
+          </div>
+          <h1 class="text-base font-bold text-stone-900 tracking-tight leading-tight">48일 말씀 암송 대행진</h1>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex items-center space-x-1.5 sm:space-x-2">
+        <button id="btnGoToday" title="오늘의 구절로 이동" class="flex items-center space-x-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-amber-50 text-amber-800 border border-amber-200 hover:bg-amber-100 transition shadow-sm">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-600"></i>
+          <span>오늘 구절</span>
+        </button>
+        <button id="btnOpenStats" title="공동체 달성률" class="flex items-center space-x-1 px-2.5 py-1.5 rounded-lg text-xs font-medium bg-eden-50 text-eden-800 border border-eden-200 hover:bg-eden-100 transition">
+          <i data-lucide="bar-chart-2" class="w-3.5 h-3.5"></i>
+          <span class="hidden sm:inline">공동체 현황</span>
+        </button>
+        <button id="btnOpenProfile" title="프로필 변경" class="p-1.5 rounded-lg text-stone-600 hover:bg-stone-100 hover:text-stone-900 transition border border-stone-200">
+          <i data-lucide="user-cog" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Personal Progress Bar Banner -->
+    <div class="bg-gradient-to-r from-eden-900 via-eden-800 to-eden-700 text-white px-4 py-2 text-xs">
+      <div class="max-w-4xl mx-auto flex items-center justify-between mb-1">
+        <div class="flex items-center space-x-2">
+          <span class="font-semibold text-eden-200">나의 암송 완주율</span>
+          <span class="text-white/80 font-normal">| <span id="userCompletedCount">0</span> / 48일</span>
+        </div>
+        <div class="flex items-center space-x-1 font-bold text-gold-400">
+          <i data-lucide="award" class="w-3.5 h-3.5"></i>
+          <span id="userProgressPct">0%</span>
+        </div>
+      </div>
+      <div class="max-w-4xl mx-auto w-full bg-white/20 rounded-full h-2 overflow-hidden shadow-inner">
+        <div id="userProgressBar" class="h-full bg-gradient-to-r from-gold-400 to-amber-300 rounded-full transition-all duration-500 ease-out" style="width: 0%"></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="max-w-4xl mx-auto w-full px-4 py-5 flex-1 flex flex-col gap-6">
+
+    <!-- Day Selector Navigator Card -->
+    <section class="bg-white rounded-2xl p-4 shadow-sm border border-stone-200/80 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+      <div class="flex items-center justify-between">
+        <button id="btnPrevDay" class="p-2 rounded-xl text-stone-600 hover:bg-stone-100 active:scale-95 transition disabled:opacity-30 disabled:pointer-events-none">
+          <i data-lucide="chevron-left" class="w-5 h-5"></i>
+        </button>
+
+        <div class="text-center px-2">
+          <div class="flex items-center justify-center space-x-2">
+            <span id="currentDayBadge" class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-eden-700 text-white shadow-sm">
+              Day 1
+            </span>
+            <span id="todayIndicatorBadge" class="hidden items-center space-x-1 text-xs font-bold px-2 py-0.5 rounded-full badge-today text-white shadow-sm animate-pulse-subtle">
+              <i data-lucide="sparkle" class="w-3 h-3 fill-current"></i>
+              <span>오늘의 말씀</span>
+            </span>
+          </div>
+          <p id="currentDateDisplay" class="text-xs text-stone-500 font-medium mt-1">9월 28일 (월)</p>
+        </div>
+
+        <button id="btnNextDay" class="p-2 rounded-xl text-stone-600 hover:bg-stone-100 active:scale-95 transition disabled:opacity-30 disabled:pointer-events-none">
+          <i data-lucide="chevron-right" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Quick Action Utilities -->
+      <div class="flex items-center justify-center sm:justify-end space-x-2 border-t md:border-t-0 pt-3 md:pt-0 border-stone-100">
+        <button id="btnTTS" class="flex items-center space-x-1 px-3 py-1.5 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-medium transition active:scale-95" title="음성으로 또박또박 낭독">
+          <i data-lucide="volume-2" class="w-4 h-4 text-eden-700" id="ttsIcon"></i>
+          <span id="ttsBtnText">낭독 듣기</span>
+        </button>
+
+        <button id="btnCopyVerse" class="flex items-center space-x-1 px-3 py-1.5 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-medium transition active:scale-95" title="말씀 클립보드 복사">
+          <i data-lucide="copy" class="w-4 h-4 text-stone-600"></i>
+          <span>구절 복사</span>
+        </button>
+
+        <button id="btnToggleCompleted" class="flex items-center space-x-1 px-3.5 py-1.5 rounded-xl bg-eden-600 hover:bg-eden-700 text-white text-xs font-bold shadow transition active:scale-95">
+          <i data-lucide="check-circle" class="w-4 h-4"></i>
+          <span id="btnCompletedLabel">암송 완료하기</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Mode Tabs -->
+    <div class="bg-stone-200/70 p-1 rounded-2xl flex items-center gap-1 overflow-x-auto text-xs font-medium text-stone-600 select-none shadow-inner">
+      <button class="mode-tab flex-1 min-w-[70px] py-2 px-2 rounded-xl text-center transition flex items-center justify-center space-x-1 bg-white text-eden-900 font-bold shadow-sm" data-mode="full">
+        <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+        <span>전체보기</span>
+      </button>
+      <button class="mode-tab flex-1 min-w-[70px] py-2 px-2 rounded-xl text-center transition flex items-center justify-center space-x-1 hover:text-stone-900" data-mode="typing">
+        <i data-lucide="keyboard" class="w-3.5 h-3.5"></i>
+        <span>타자 암송</span>
+      </button>
+      <button class="mode-tab flex-1 min-w-[70px] py-2 px-2 rounded-xl text-center transition flex items-center justify-center space-x-1 hover:text-stone-900" data-mode="chosung">
+        <i data-lucide="type" class="w-3.5 h-3.5"></i>
+        <span>초성 힌트</span>
+      </button>
+      <button class="mode-tab flex-1 min-w-[70px] py-2 px-2 rounded-xl text-center transition flex items-center justify-center space-x-1 hover:text-stone-900" data-mode="blank">
+        <i data-lucide="eye-off" class="w-3.5 h-3.5"></i>
+        <span>빈칸 모드</span>
+      </button>
+      <button class="mode-tab flex-1 min-w-[70px] py-2 px-2 rounded-xl text-center transition flex items-center justify-center space-x-1 hover:text-stone-900" data-mode="cover">
+        <i data-lucide="lock" class="w-3.5 h-3.5"></i>
+        <span>가리기</span>
+      </button>
+    </div>
+
+    <!-- Active Scripture Learning Card -->
+    <section class="verse-card-paper rounded-3xl p-6 sm:p-8 border border-stone-200/90 relative overflow-hidden transition-all duration-300 min-h-[320px] flex flex-col justify-between" id="scriptureCard">
+      <!-- Decorative water & cross emblem watermark -->
+      <div class="absolute -right-8 -bottom-8 opacity-5 pointer-events-none select-none text-eden-900">
+        <i data-lucide="cross" class="w-56 h-56"></i>
+      </div>
+
+      <!-- Reference Header -->
+      <div class="mb-4">
+        <div class="flex items-center justify-between border-b border-stone-100 pb-3">
+          <div class="flex items-center space-x-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-eden-500"></span>
+            <span id="verseTheme" class="text-xs font-bold tracking-wider text-eden-700 uppercase">창조와 구원</span>
+          </div>
+          <div class="text-xs font-semibold px-2 py-0.5 rounded bg-stone-100 text-stone-600">
+            개역개정
+          </div>
+        </div>
+        <h2 id="verseReference" class="font-myeongjo text-xl sm:text-2xl font-extrabold text-stone-900 mt-2 tracking-tight">
+          이사야 43:11-12
+        </h2>
+      </div>
+
+      <!-- Mode 1: Full View -->
+      <div id="modeViewFull" class="mode-view py-2">
+        <p id="fullVerseText" class="font-myeongjo text-lg sm:text-2xl text-stone-800 leading-relaxed sm:leading-loose whitespace-pre-wrap break-keep select-text font-medium">
+          <!-- Text will be inserted dynamically -->
+        </p>
+      </div>
+
+      <!-- Mode 2: Typing Practice -->
+      <div id="modeViewTyping" class="mode-view hidden py-2 space-y-4">
+        <div class="flex items-center justify-between text-xs font-semibold text-stone-500 px-1">
+          <span>키보드로 말씀을 입력해 보세요.</span>
+          <span class="text-eden-700 font-bold text-sm" id="typingAccuracy">정확도: 100%</span>
+        </div>
+        <!-- Real-time comparison preview box -->
+        <div id="typingGuideBox" class="p-4 rounded-2xl bg-stone-50 border border-stone-200 font-myeongjo text-base sm:text-lg leading-relaxed sm:leading-loose select-none break-keep min-h-[90px]">
+          <!-- Real-time formatted letters -->
+        </div>
+        <!-- Input textarea -->
+        <textarea id="typingInput" rows="3" placeholder="여기에 위 구절을 따라 입력하세요..." class="w-full p-4 rounded-2xl border-2 border-stone-200 focus:border-eden-600 focus:ring-2 focus:ring-eden-100 font-myeongjo text-base sm:text-lg resize-none outline-none transition"></textarea>
+        <div class="flex items-center justify-end space-x-2">
+          <button id="btnResetTyping" class="px-3 py-1.5 rounded-xl text-xs text-stone-600 bg-stone-100 hover:bg-stone-200 transition">
+            다시 입력
+          </button>
+        </div>
+      </div>
+
+      <!-- Mode 3: Chosung (Initial Consonants) -->
+      <div id="modeViewChosung" class="mode-view hidden py-2 space-y-3">
+        <p class="text-xs text-stone-500 font-medium">초성을 힌트 삼아 소리 내어 암송해 보세요.</p>
+        <p id="chosungVerseText" class="font-myeongjo text-lg sm:text-2xl text-stone-800 leading-relaxed sm:leading-loose tracking-wider break-keep font-semibold">
+          <!-- Chosung will be inserted dynamically -->
+        </p>
+      </div>
+
+      <!-- Mode 4: Blank Word Cards -->
+      <div id="modeViewBlank" class="mode-view hidden py-2 space-y-3">
+        <div class="flex items-center justify-between text-xs text-stone-500 font-medium">
+          <span>가려진 단어를 탭(클릭)하면 드러납니다.</span>
+          <button id="btnToggleAllBlanks" class="text-xs font-bold text-eden-700 underline decoration-eden-300 hover:text-eden-800">
+            모두 열기 / 닫기
+          </button>
+        </div>
+        <div id="blankVerseContainer" class="font-myeongjo text-lg sm:text-2xl leading-relaxed sm:leading-loose break-keep flex flex-wrap items-center gap-1.5 sm:gap-2">
+          <!-- Word capsules -->
+        </div>
+      </div>
+
+      <!-- Mode 5: Full Cover / Conceal -->
+      <div id="modeViewCover" class="mode-view hidden py-2 space-y-4">
+        <p class="text-xs text-stone-500 font-medium">마음속으로 온전히 암송한 뒤, 카드를 터치하여 확인하세요.</p>
+        <div id="coverRevealCard" class="cursor-pointer relative min-h-[160px] p-6 rounded-2xl border-2 border-dashed border-stone-300 flex flex-col items-center justify-center text-center transition-all duration-300 bg-stone-50 hover:bg-stone-100">
+          <div id="coverPlaceholder" class="space-y-2 flex flex-col items-center">
+            <div class="w-12 h-12 rounded-full bg-eden-100 text-eden-800 flex items-center justify-center">
+              <i data-lucide="eye" class="w-6 h-6"></i>
+            </div>
+            <p class="text-sm font-bold text-stone-700">구절이 완전히 가려져 있습니다</p>
+            <p class="text-xs text-stone-500">여기를 탭하면 정답 구절이 열립니다</p>
+          </div>
+          <div id="coverHiddenText" class="hidden w-full text-left font-myeongjo text-lg sm:text-2xl text-stone-800 leading-relaxed break-keep">
+            <!-- Reveals full text -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Card Footer Helper -->
+      <div class="mt-6 pt-4 border-t border-stone-100 flex items-center justify-between text-xs text-stone-500">
+        <span class="flex items-center space-x-1">
+          <i data-lucide="check-check" class="w-3.5 h-3.5 text-eden-600"></i>
+          <span id="footerStatusText">아직 암송 전입니다. 외운 후 완료 버튼을 눌러주세요.</span>
+        </span>
+        <span class="font-mono text-stone-400" id="cardDayCounter">1 / 48</span>
+      </div>
+    </section>
+
+    <!-- 48-Day Schedule Table Grid -->
+    <section class="bg-white rounded-3xl p-5 sm:p-6 shadow-sm border border-stone-200/90 space-y-4">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-stone-100 pb-3">
+        <div>
+          <h3 class="text-base font-bold text-stone-900 flex items-center space-x-2">
+            <span>48일 암송 플랜 일정표</span>
+            <span class="text-xs px-2 py-0.5 rounded-full bg-stone-100 text-stone-600 font-normal">9/28 ~ 11/14</span>
+          </h3>
+          <p class="text-xs text-stone-500 mt-0.5">클릭하여 원하는 날짜의 구절을 자유롭게 복습하세요.</p>
+        </div>
+        <!-- Filter Tabs -->
+        <div class="flex items-center space-x-1 text-xs">
+          <button id="filterAll" class="px-2.5 py-1 rounded-lg bg-eden-100 text-eden-900 font-bold">전체</button>
+          <button id="filterDone" class="px-2.5 py-1 rounded-lg hover:bg-stone-100 text-stone-600">완료됨</button>
+          <button id="filterYet" class="px-2.5 py-1 rounded-lg hover:bg-stone-100 text-stone-600">미완료</button>
+        </div>
+      </div>
+
+      <!-- Days Grid (48 days) -->
+      <div id="daysGridContainer" class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2">
+        <!-- Rendered with JS -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Stats & Community Ranking Modal -->
+  <div id="statsModal" class="fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white w-full max-w-xl rounded-3xl shadow-2xl border border-stone-100 overflow-hidden max-h-[90vh] flex flex-col animate-in fade-in zoom-in-95 duration-200">
+      
+      <!-- Modal Header -->
+      <div class="water-gradient text-white p-5 flex items-center justify-between">
+        <div class="flex items-center space-x-2">
+          <div class="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center">
+            <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-base">물댄동산교회 공동체 암송 현황</h3>
+            <p class="text-xs text-eden-100 font-light">함께 달리는 48일의 은혜 여정</p>
+          </div>
+        </div>
+        <button id="btnCloseStats" class="p-1 rounded-full text-white/80 hover:text-white hover:bg-white/10 transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-5 overflow-y-auto space-y-6 flex-1 text-stone-800">
+        
+        <!-- Summary Cards (Total Stats) -->
+        <div class="grid grid-cols-2 gap-3">
+          <div class="bg-stone-50 rounded-2xl p-4 border border-stone-100 text-center">
+            <p class="text-xs text-stone-500 font-medium">전체 참여 성도</p>
+            <p id="statTotalUsers" class="text-2xl font-black text-stone-900 mt-1">0명</p>
+            <p class="text-[11px] text-stone-400 mt-0.5">6개 부서 합계</p>
+          </div>
+          <div class="bg-eden-50/70 rounded-2xl p-4 border border-eden-100 text-center">
+            <p class="text-xs text-eden-800 font-medium">공동체 평균 달성률</p>
+            <p id="statAveragePct" class="text-2xl font-black text-eden-700 mt-1">0%</p>
+            <p class="text-[11px] text-eden-600/80 mt-0.5">48일 기준 평균</p>
+          </div>
+        </div>
+
+        <!-- Department Rankings Section -->
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <h4 class="text-sm font-bold text-stone-900 flex items-center space-x-1.5">
+              <i data-lucide="layers" class="w-4 h-4 text-eden-600"></i>
+              <span>부서별 평균 달성률 랭킹</span>
+            </h4>
+            <span class="text-[11px] text-stone-400">참여율 순위</span>
+          </div>
+
+          <div id="deptRankingsList" class="space-y-2.5">
+            <!-- Injected by script -->
+          </div>
+        </div>
+
+        <!-- My Department Member Details (Strict Privacy: Only My Dept Shown) -->
+        <div class="pt-4 border-t border-stone-200">
+          <div class="flex items-center justify-between mb-3">
+            <div>
+              <h4 class="text-sm font-bold text-stone-900 flex items-center space-x-1.5">
+                <i data-lucide="users" class="w-4 h-4 text-eden-600"></i>
+                <span>우리 부서 식구들 (<span id="statMyDeptTitle">물댄동산교회</span>)</span>
+              </h4>
+              <p class="text-[11px] text-stone-400 mt-0.5">타부서 개인 정보는 보호되며, 우리 부서 식구만 표시됩니다.</p>
+            </div>
+            <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-eden-100 text-eden-800" id="statMyDeptCount">0명</span>
+          </div>
+
+          <div id="myDeptMembersList" class="space-y-2 max-h-56 overflow-y-auto pr-1">
+            <!-- Member cards injected by script -->
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="p-3 bg-stone-50 border-t border-stone-100 flex justify-end">
+        <button id="btnCloseStatsFooter" class="px-4 py-2 rounded-xl bg-stone-200 hover:bg-stone-300 text-stone-800 text-xs font-semibold transition">
+          닫기
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Entrance & Profile Setting Modal -->
+  <div id="profileModal" class="fixed inset-0 z-50 bg-stone-900/70 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl border border-stone-100 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      <div class="water-gradient text-white p-6 text-center">
+        <div class="w-12 h-12 rounded-2xl bg-white/20 mx-auto flex items-center justify-center mb-3">
+          <i data-lucide="church" class="w-7 h-7"></i>
+        </div>
+        <h3 class="font-extrabold text-lg" id="profileModalTitle">성도 등록 및 입장</h3>
+        <p class="text-xs text-eden-100 mt-1 font-light">물댄동산교회 48일 말씀 암송 여정에 환영합니다</p>
+      </div>
+
+      <div class="p-6 space-y-4">
+        <!-- Department Select -->
+        <div>
+          <label class="block text-xs font-bold text-stone-700 mb-1.5">소속 부서 선택 (필수)</label>
+          <div class="grid grid-cols-3 gap-2" id="deptRadioGroup">
+            <!-- 6 Departments: 물댄동산교회, 권사회, 남전도회, 여전도회, 로뎀나무, 종려나무 -->
+          </div>
+        </div>
+
+        <!-- Name Input -->
+        <div>
+          <label for="inputUserName" class="block text-xs font-bold text-stone-700 mb-1.5">이름 또는 닉네임</label>
+          <input type="text" id="inputUserName" maxlength="12" placeholder="예: 김은혜 권사, 홍길동 집사" class="w-full px-4 py-3 rounded-2xl border border-stone-300 focus:border-eden-600 focus:ring-2 focus:ring-eden-100 outline-none text-stone-800 text-sm font-medium">
+          <p class="text-[11px] text-stone-400 mt-1">우리 부서 공동체 현황에 표시될 호칭입니다.</p>
+        </div>
+
+        <div id="profileErrorNotice" class="hidden text-xs text-rose-600 bg-rose-50 p-2.5 rounded-xl border border-rose-200">
+          부서와 이름을 모두 입력해 주세요.
+        </div>
+      </div>
+
+      <div class="p-4 bg-stone-50 border-t border-stone-100 flex items-center justify-end space-x-2">
+        <button id="btnCancelProfile" class="hidden px-4 py-2.5 rounded-xl text-stone-600 hover:bg-stone-200 text-xs font-semibold transition">
+          취소
+        </button>
+        <button id="btnSaveProfile" class="w-full sm:w-auto px-6 py-2.5 rounded-xl water-gradient text-white text-xs font-bold shadow hover:opacity-95 transition active:scale-95">
+          입장 및 저장하기
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Box -->
+  <div id="toastBox" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 pointer-events-none opacity-0 translate-y-3 toast-transition bg-stone-900/90 backdrop-blur-md text-white px-4 py-2.5 rounded-2xl shadow-xl text-xs font-medium flex items-center space-x-2">
+    <i data-lucide="check" class="w-4 h-4 text-emerald-400" id="toastIcon"></i>
+    <span id="toastMessage">알림</span>
+  </div>
+
+  <!-- Footer -->
+  <footer class="mt-auto py-6 border-t border-eden-100 bg-white/70 text-center text-xs text-stone-400">
+    <p>물댄동산교회 48일 성경 암송 플랜 (2026. 9. 28 ~ 11. 14)</p>
+    <p class="mt-1 text-[11px] text-stone-400">성경 본문 : 개역개정 (대한성서공회)</p>
+  </footer>
+
+  <script>
+    /*
+      물댄동산교회 48일 성경 암송 (9/28 ~ 11/14)
+      전체 성구 구성 (개역개정):
+      1) 이사야 43장 1절 ~ 28절 (25일: 11-12절, 14-15절, 18-19절 묶음)
+      2) 이사야 52장 1절 ~ 15절 (14일: 2-3절 묶음)
+      3) 시편 24편 1절 ~ 10절 (9일: 9-10절 묶음)
+      총 48일 코스 (9월 28일 월요일 ~ 11월 14일 토요일)
+    */
+    const SCRIPTURES_DATA = [
+      {
+        day: 1,
+        dateStr: "9월 28일 (월)",
+        theme: "지명하여 부르심",
+        ref: "이사야 43:1",
+        text: "야곱아 너를 창조하신 여호와께서 지금 말씀하시느니라 이스라엘아 너를 지으신 이가 말씀하시느니라 너는 두려워하지 말라 내가 너를 구속하였고 내가 너를 지명하여 불렀나니 너는 내 것이라"
+      },
+      {
+        day: 2,
+        dateStr: "9월 29일 (화)",
+        theme: "물과 불 가운데서도",
+        ref: "이사야 43:2",
+        text: "네가 물 가운데로 지날 때에 내가 너와 함께 할 것이라 강을 건널 때에 물이 너를 침몰하지 못할 것이며 네가 불 가운데로 지날 때에 타지도 아니할 것이요 불꽃이 너를 사르지도 못하리니"
+      },
+      {
+        day: 3,
+        dateStr: "9월 30일 (수)",
+        theme: "거룩한 구원자",
+        ref: "이사야 43:3",
+        text: "대저 나는 여호와 네 하나님이요 이스라엘의 거룩한 이요 네 구원자임이라 내가 애굽을 너의 속량물로, 구스와 스바를 너를 대신하여 주었노라"
+      },
+      {
+        day: 4,
+        dateStr: "10월 1일 (목)",
+        theme: "보배롭고 존귀한 자",
+        ref: "이사야 43:4",
+        text: "네가 내 눈에 보배롭고 존귀하며 내가 너를 사랑하였은즉 내가 네 대신 사람들을 내어 주며 백성들이 네 생명을 대신하리니"
+      },
+      {
+        day: 5,
+        dateStr: "10월 2일 (금)",
+        theme: "자손을 모으심",
+        ref: "이사야 43:5",
+        text: "두려워하지 말라 내가 너와 함께 하여 네 자손을 동쪽에서부터 오게 하며 서쪽에서부터 너를 모을 것이며"
+      },
+      {
+        day: 6,
+        dateStr: "10월 3일 (토)",
+        theme: "땅 끝에서 이끄심",
+        ref: "이사야 43:6",
+        text: "내가 북쪽에게 이르기를 내놓으라 남쪽에게 이르기를 가두어 두지 말라 내 아들들을 먼 곳에서 이끌며 내 딸들을 땅 끝에서 오게 하며"
+      },
+      {
+        day: 7,
+        dateStr: "10월 4일 (일)",
+        theme: "영광을 위해 창조된 자",
+        ref: "이사야 43:7",
+        text: "내 이름으로 불려지는 모든 자 곧 내가 내 영광을 위하여 창조한 자를 오게 하라 그를 내가 지었고 그를 내가 만들었느니라"
+      },
+      {
+        day: 8,
+        dateStr: "10월 5일 (월)",
+        theme: "눈먼 백성을 이끄심",
+        ref: "이사야 43:8",
+        text: "눈이 있어도 보지 못하고 귀가 있어도 듣지 못하는 백성을 이끌어 내라"
+      },
+      {
+        day: 9,
+        dateStr: "10월 6일 (화)",
+        theme: "열방의 분집",
+        ref: "이사야 43:9",
+        text: "열방은 모였으며 민족들이 분집하였는데 그들 중에 누가 이 일을 알려 주며 이전 일들을 우리에게 들려주겠느냐 그들이 증인을 세워서 자기들의 옳음을 나타내어 듣는 자들로 옳다 말하게 하여 보라"
+      },
+      {
+        day: 10,
+        dateStr: "10월 7일 (수)",
+        theme: "나의 택한 증인과 종",
+        ref: "이사야 43:10",
+        text: "나 여호와가 말하노라 너희는 나의 증인, 나의 종으로 택함을 입었나니 이는 너희가 나를 알고 믿으며 내가 그인 줄 깨닫게 하려 함이라 나의 전에 지음을 받은 신이 없었느니라 나의 후에도 없으리라"
+      },
+      {
+        day: 11,
+        dateStr: "10월 8일 (목)",
+        theme: "유일한 구원자",
+        ref: "이사야 43:11-12",
+        text: "나 곧 나는 여호와라 나 외에 구원자가 없느니라 내가 알려 주었으며 구원하였으며 보였고 너희 중에 다른 신이 없었나니 그러므로 너희는 나의 증인이요 나는 하나님이니라 여호와의 말씀이니라"
+      },
+      {
+        day: 12,
+        dateStr: "10월 9일 (금)",
+        theme: "태초부터 계신 이",
+        ref: "이사야 43:13",
+        text: "과연 태초로부터 나는 그이니 내 손에서 건질 자가 없도다 내가 행하리니 누가 막으리요"
+      },
+      {
+        day: 13,
+        dateStr: "10월 10일 (토)",
+        theme: "창조자요 너희의 왕",
+        ref: "이사야 43:14-15",
+        text: "너희의 구속자요 이스라엘의 거룩한 이 여호와가 말하노라 너희를 위하여 내가 바벨론에 사람을 보내어 모든 갈대아 사람에게 자기들이 연락하던 배를 타고 도망하여 내려가게 하리라 나는 여호와 너희의 거룩한 이요 이스라엘의 창조자요 너희의 왕이니라"
+      },
+      {
+        day: 14,
+        dateStr: "10월 11일 (일)",
+        theme: "바다 가운데의 길",
+        ref: "이사야 43:16",
+        text: "나 여호와가 이같이 말하노라 바다 가운데에 길을, 큰 물 가운데에 지름길을 내고"
+      },
+      {
+        day: 15,
+        dateStr: "10월 12일 (월)",
+        theme: "용사를 소멸하심",
+        ref: "이사야 43:17",
+        text: "병거와 말과 군대의 용사를 이끌어 내어 그들이 일시에 엎드러져 일어나지 못하고 소멸하기를 꺼져가는 등불 같게 하였느니라"
+      },
+      {
+        day: 16,
+        dateStr: "10월 13일 (화)",
+        theme: "새 일을 행하심",
+        ref: "이사야 43:18-19",
+        text: "너희는 이전 일을 기억하지 말며 옛날 일을 생각하지 말라 보라 내가 새 일을 행하리니 이제 나타낼 것이라 너희가 그것을 알지 못하겠느냐 반드시 내가 광야에 길을 사막에 강을 내리니"
+      },
+      {
+        day: 17,
+        dateStr: "10월 14일 (수)",
+        theme: "광야의 강과 물",
+        ref: "이사야 43:20",
+        text: "장차 들짐승 곧 승냥이와 타조도 나를 존경할 것은 내가 광야에 물을, 사막에 강들을 내어 내 백성, 내가 택한 자에게 마시게 할 것임이라"
+      },
+      {
+        day: 18,
+        dateStr: "10월 15일 (목)",
+        theme: "찬송하게 하려 함이라",
+        ref: "이사야 43:21",
+        text: "이 백성은 내가 나를 위하여 지었나니 나를 찬송하게 하려 함이니라"
+      },
+      {
+        day: 19,
+        dateStr: "10월 16일 (금)",
+        theme: "나를 괴롭게 여김",
+        ref: "이사야 43:22",
+        text: "그러나 야곱아 너는 나를 부르지 아니하였고 이스라엘아 너는 나를 괴롭게 여겼으며"
+      },
+      {
+        day: 20,
+        dateStr: "10월 17일 (토)",
+        theme: "수고롭게 하지 않으심",
+        ref: "이사야 43:23",
+        text: "네 번제의 양을 내게로 가져오지 아니하였고 네 제물로 나를 공경하지 아니하였느니라 나는 제물로 말미암아 너를 수고롭게 하지 아니하였고 유향으로 말미암아 너를 괴롭게 하지 아니하였거늘"
+      },
+      {
+        day: 21,
+        dateStr: "10월 18일 (일)",
+        theme: "죄악의 짐",
+        ref: "이사야 43:24",
+        text: "너는 나를 위하여 돈으로 향품을 사지 아니하며 희생의 기름으로 나를 흡족하게 하지 아니하고 네 죄짐으로 나를 수고롭게 하며 네 죄악으로 나를 괴롭게 하였느니라"
+      },
+      {
+        day: 22,
+        dateStr: "10월 19일 (월)",
+        theme: "허물을 도말하심",
+        ref: "이사야 43:25",
+        text: "나 곧 나는 나를 위하여 네 허물을 도말하는 자니 네 죄를 기억하지 아니하리라"
+      },
+      {
+        day: 23,
+        dateStr: "10월 20일 (화)",
+        theme: "함께 변론하자",
+        ref: "이사야 43:26",
+        text: "너는 나에게 기억이 나게 하라 우리가 함께 변론하자 너는 말하여 네가 의로움을 나타내라"
+      },
+      {
+        day: 24,
+        dateStr: "10월 21일 (수)",
+        theme: "조상의 범죄",
+        ref: "이사야 43:27",
+        text: "네 시조가 범죄하였고 너의 교사들이 나를 배반하였나니"
+      },
+      {
+        day: 25,
+        dateStr: "10월 22일 (목)",
+        theme: "비방거리가 된 이스라엘",
+        ref: "이사야 43:28",
+        text: "그러므로 내가 성소의 어른들을 욕되게 하며 야곱이 진멸 당하도록 내어 주며 이스라엘이 비방거리가 되게 하리라"
+      },
+      {
+        day: 26,
+        dateStr: "10월 23일 (금)",
+        theme: "시온이여 깰지어다",
+        ref: "이사야 52:1",
+        text: "시온이여 깰지어다 깰지어다 네 힘을 낼지어다 거룩한 성 예루살렘이여 네 아름다운 옷을 입을지어다 이제부터 할례 받지 아니한 자와 부정한 자가 다시는 네게로 들어옴이 없을 것임이라"
+      },
+      {
+        day: 27,
+        dateStr: "10월 24일 (토)",
+        theme: "티끌을 털어버리라",
+        ref: "이사야 52:2-3",
+        text: "너는 티끌을 털어버릴지어다 예루살렘이여 일어나 앉을지어다 사로잡힌 딸 시온이여 네 목의 줄을 스스로 풀지어다 여호와께서 이와 같이 말씀하시되 너희가 값 없이 팔렸으니 돈 없이 속량되리라"
+      },
+      {
+        day: 28,
+        dateStr: "10월 25일 (일)",
+        theme: "애굽과 앗수르의 압박",
+        ref: "이사야 52:4",
+        text: "주 여호와께서 이와 같이 말씀하시되 내 백성이 전에 애굽에 내려가서 거기에 거류하였고 앗수르인은 공연히 그들을 압박하였도다"
+      },
+      {
+        day: 29,
+        dateStr: "10월 26일 (월)",
+        theme: "까닭 없이 잡혀간 백성",
+        ref: "이사야 52:5",
+        text: "그러므로 이제 여호와께서 말씀하시되 내 백성이 까닭 없이 잡혀갔으니 내가 여기서 어떻게 하랴 여호와께서 말씀하시되 그들을 관할하는 자들이 개가를 부르며 내 이름을 항상 종일토록 더럽히도다"
+      },
+      {
+        day: 30,
+        dateStr: "10월 27일 (화)",
+        theme: "주의 이름을 앎",
+        ref: "이사야 52:6",
+        text: "그러므로 내 백성은 내 이름을 알리라 그러므로 그 날에는 그들이 이 말을 하는 자가 나인 줄 알리라 내가 여기 있느니라"
+      },
+      {
+        day: 31,
+        dateStr: "10월 28일 (수)",
+        theme: "아름다운 발",
+        ref: "이사야 52:7",
+        text: "좋은 소식을 전하며 평화를 공포하며 복된 좋은 소식을 가져오며 구원을 공포하며 시온을 향하여 이르기를 네 하나님이 통치하신다 하는 자의 산을 넘는 발이 어찌 그리 아름다운가"
+      },
+      {
+        day: 32,
+        dateStr: "10월 29일 (목)",
+        theme: "파수꾼들의 노래",
+        ref: "이사야 52:8",
+        text: "네 파수꾼들의 소리로다 그들이 소리를 높여 일제히 노래하니 이는 여호와께서 시온으로 돌아오실 때에 그들의 눈이 마주 보리로다"
+      },
+      {
+        day: 33,
+        dateStr: "10월 30일 (금)",
+        theme: "위로와 구속의 노래",
+        ref: "이사야 52:9",
+        text: "너 예루살렘의 황폐한 곳들아 기쁜 소리를 내어 함께 노래할지어다 이는 여호와께서 그의 백성을 위로하셨고 예루살렘을 구속하셨음이라"
+      },
+      {
+        day: 34,
+        dateStr: "10월 31일 (토)",
+        theme: "열방 앞의 거룩한 팔",
+        ref: "이사야 52:10",
+        text: "여호와께서 열방의 목전에서 그의 거룩한 팔을 나타내셨으므로 땅 끝까지도 모두 우리 하나님의 구원을 보았도다"
+      },
+      {
+        day: 35,
+        dateStr: "11월 1일 (일)",
+        theme: "스스로 정결하게 하라",
+        ref: "이사야 52:11",
+        text: "너희는 떠날지어다 떠날지어다 거기서 나오고 부정한 것을 만지지 말지어다 그 가운데에서 나올지어다 여호와의 기구를 메는 자들이여 스스로 정결하게 할지어다"
+      },
+      {
+        day: 36,
+        dateStr: "11월 2일 (월)",
+        theme: "앞서 행하시며 호위하심",
+        ref: "이사야 52:12",
+        text: "여호와께서 너희 앞에서 행하시며 이스라엘의 하나님이 너희 뒤에서 호위하시리니 너희가 황급히 나오지 아니하며 도망하듯 다니지 아니하리라"
+      },
+      {
+        day: 37,
+        dateStr: "11월 3일 (화)",
+        theme: "지극히 존귀한 종",
+        ref: "이사야 52:13",
+        text: "보라 내 종이 형통하리니 받들어 높이 들려서 지극히 존귀하게 되리라"
+      },
+      {
+        day: 38,
+        dateStr: "11월 4일 (수)",
+        theme: "상한 모습",
+        ref: "이사야 52:14",
+        text: "전에는 그의 모양이 타인보다 상하였고 그의 모습이 사람들보다 상하였으므로 많은 사람이 그에 대하여 놀랐거니와"
+      },
+      {
+        day: 39,
+        dateStr: "11월 5일 (목)",
+        theme: "나라들을 놀라게 하심",
+        ref: "이사야 52:15",
+        text: "그가 나라들을 놀라게 할 것이며 왕들은 그로 말미암아 그들의 입을 봉하리니 이는 그들이 아직 그들에게 전파되지 아니한 것을 볼 것이요 아직 듣지 못한 것을 깨달을 것임이라"
+      },
+      {
+        day: 40,
+        dateStr: "11월 6일 (금)",
+        theme: "온 세계가 주의 것",
+        ref: "시편 24:1",
+        text: "땅과 거기에 충만한 것과 세계와 그 가운데에 사는 자들은 다 여호와의 것이로다"
+      },
+      {
+        day: 41,
+        dateStr: "11월 7일 (토)",
+        theme: "터전을 세우신 주",
+        ref: "시편 24:2",
+        text: "여호와께서 그 터를 바다 위에 세우심이여 강들 위에 건설하셨도다"
+      },
+      {
+        day: 42,
+        dateStr: "11월 8일 (일)",
+        theme: "거룩한 곳에 설 자",
+        ref: "시편 24:3",
+        text: "여호와의 산에 오를 자가 누구며 그의 거룩한 곳에 설 자가 누구인가"
+      },
+      {
+        day: 43,
+        dateStr: "11월 9일 (월)",
+        theme: "손과 마음이 청결한 자",
+        ref: "시편 24:4",
+        text: "곧 손이 깨끗하며 마음이 청결하며 뜻을 허탄한 데에 두지 아니하며 거짓 맹세하지 아니하는 자로다"
+      },
+      {
+        day: 44,
+        dateStr: "11월 10일 (화)",
+        theme: "주의 복과 의를 얻으리니",
+        ref: "시편 24:5",
+        text: "그는 여호와께 복을 받고 구원의 하나님께 의를 얻으리니"
+      },
+      {
+        day: 45,
+        dateStr: "11월 11일 (수)",
+        theme: "주의 얼굴을 구하는 자",
+        ref: "시편 24:6",
+        text: "이는 여호와를 찾는 족속이요 야곱의 하나님의 얼굴을 구하는 자로다 (셀라)"
+      },
+      {
+        day: 46,
+        dateStr: "11월 12일 (목)",
+        theme: "영광의 왕이 들어가신다",
+        ref: "시편 24:7",
+        text: "문들아 너희 머리를 들지어다 영원한 문들아 들릴지어다 영광의 왕이 들어가시리로다"
+      },
+      {
+        day: 47,
+        dateStr: "11월 13일 (금)",
+        theme: "강하고 능한 여호와",
+        ref: "시편 24:8",
+        text: "영광의 왕이 누구시냐 강하고 능한 여호와시요 전쟁에 능한 여호와시로다"
+      },
+      {
+        day: 48,
+        dateStr: "11월 14일 (토)",
+        theme: "만군의 여호와 영광의 왕",
+        ref: "시편 24:9-10",
+        text: "문들아 너희 머리를 들지어다 영원한 문들아 들릴지어다 영광의 왕이 들어가시리로다 영광의 왕이 누구시냐 만군의 여호와께서 곧 영광의 왕이시로다 (셀라)"
+      }
+    ];
+
+    const DEPARTMENTS = [
+      "물댄동산교회",
+      "권사회",
+      "남전도회",
+      "여전도회",
+      "로뎀나무",
+      "종려나무"
+    ];
+
+    // State
+    let currentUser = {
+      name: "",
+      dept: "물댄동산교회",
+      completedDays: [], // array of numbers: [1, 2, ...]
+      lastUpdated: null
+    };
+
+    let selectedDayIndex = 0; // 0 to 47
+    let currentTodayIndex = 0; // calculated according to calendar
+    let activeMode = "full"; // full, typing, chosung, blank, cover
+    let allMembersData = []; // list of members from storage or mock
+
+    // Calculate Today's Day based on 2026.09.28 start
+    function calculateTodayDayIndex() {
+      const now = new Date();
+      // Year 2026, 9/28 (Month is 0-indexed: 8 = September)
+      const startDate = new Date(2026, 8, 28, 0, 0, 0);
+      const diffMs = now.getTime() - startDate.getTime();
+      const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+      if (diffDays < 0) {
+        return 0; // Day 1
+      } else if (diffDays >= 48) {
+        return 47; // Day 48
+      }
+      return diffDays;
+    }
+  </script>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    let db = null;
+    let auth = null;
+    let userUid = null;
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'watered-garden-bible-48';
+
+    // Mock initial community data to provide immediate graceful display even before firestore network
+    const MOCK_COMMUNITY = [
+      { id: 'm1', name: '이순희 권사', dept: '권사회', completedDays: [1,2,3,4,5,6,7,8,9,10,11,12], lastVerse: '사 40:31' },
+      { id: 'm2', name: '박정숙 권사', dept: '권사회', completedDays: [1,2,3,4,5,6,7,8], lastVerse: '빌 4:13' },
+      { id: 'm3', name: '김철수 안수집사', dept: '남전도회', completedDays: [1,2,3,4,5], lastVerse: '요 3:16' },
+      { id: 'm4', name: '이재훈 집사', dept: '남전도회', completedDays: [1,2,3,4,5,6,7,8,9,10], lastVerse: '잠 3:5-6' },
+      { id: 'm5', name: '정미영 집사', dept: '여전도회', completedDays: [1,2,3,4,5,6,7,8,9,10,11,12,13,14], lastVerse: '시 23:1-3' },
+      { id: 'm6', name: '한지혜 집사', dept: '여전도회', completedDays: [1,2,3,4,5,6], lastVerse: '고후 5:17' },
+      { id: 'm7', name: '최다윗 청년', dept: '로뎀나무', completedDays: [1,2,3,4,5,6,7,8,9,10,11], lastVerse: '사 41:10' },
+      { id: 'm8', name: '강사랑 청년', dept: '로뎀나무', completedDays: [1,2,3,4,5], lastVerse: '요 3:16' },
+      { id: 'm9', name: '박은총 성도', dept: '종려나무', completedDays: [1,2,3,4,5,6,7], lastVerse: '갈 2:20' },
+      { id: 'm10', name: '오세훈 성도', dept: '물댄동산교회', completedDays: [1,2,3,4], lastVerse: '사 52:2-3' }
+    ];
+
+    async function initFirebaseStorage() {
+      try {
+        if (typeof __firebase_config !== 'undefined') {
+          const config = JSON.parse(__firebase_config);
+          const app = initializeApp(config);
+          auth = getAuth(app);
+          db = getFirestore(app);
+
+          if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+            await signInWithCustomToken(auth, __initial_auth_token);
+          } else {
+            await signInAnonymously(auth);
+          }
+          userUid = auth.currentUser?.uid || 'user_' + Math.random().toString(36).substring(2, 9);
+
+          // Listen to community members collection
+          const membersCol = collection(db, 'artifacts', appId, 'public', 'data', 'members');
+          onSnapshot(membersCol, (snapshot) => {
+            const fetched = [];
+            snapshot.forEach(docSnap => {
+              fetched.push({ id: docSnap.id, ...docSnap.data() });
+            });
+            if (fetched.length > 0) {
+              window.updateCommunityMembers(fetched);
+            } else {
+              window.updateCommunityMembers(MOCK_COMMUNITY);
+            }
+          }, (err) => {
+            console.warn("Firestore onSnapshot error:", err);
+            window.updateCommunityMembers(MOCK_COMMUNITY);
+          });
+        } else {
+          // In-memory fallback
+          window.updateCommunityMembers(MOCK_COMMUNITY);
+        }
+      } catch (err) {
+        console.warn("Firebase Init failed, using local session state:", err);
+        window.updateCommunityMembers(MOCK_COMMUNITY);
+      }
+    }
+
+    // Expose sync helper to save user's record
+    window.syncUserDataToCloud = async function(userData) {
+      if (!db || !auth || !auth.currentUser) return;
+      try {
+        const uid = auth.currentUser.uid;
+        const memberRef = doc(db, 'artifacts', appId, 'public', 'data', 'members', uid);
+        const lastDayNum = userData.completedDays.length > 0 ? Math.max(...userData.completedDays) : 0;
+        const lastRefText = lastDayNum > 0 ? SCRIPTURES_DATA[lastDayNum - 1].ref : '암송 시작';
+
+        await setDoc(memberRef, {
+          name: userData.name,
+          dept: userData.dept,
+          completedDays: userData.completedDays,
+          lastVerse: lastRefText,
+          updatedAt: new Date().toISOString()
+        }, { merge: true });
+      } catch (e) {
+        console.warn("Error saving user progress to cloud:", e);
+      }
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      initFirebaseStorage();
+    });
+  </script>
+
+  <script>
+    // Initialize Local / Session Profile Cache
+    function loadSavedUserProfile() {
+      try {
+        const raw = window.name ? JSON.parse(window.name) : null;
+        if (raw && raw.name && raw.dept) {
+          currentUser = {
+            name: raw.name,
+            dept: raw.dept,
+            completedDays: Array.isArray(raw.completedDays) ? raw.completedDays : []
+          };
+          return true;
+        }
+      } catch (e) {
+        // pass
+      }
+      return false;
+    }
+
+    function saveUserProfileLocally() {
+      try {
+        window.name = JSON.stringify(currentUser);
+      } catch (e) {}
+    }
+
+    // Community aggregation & update handler
+    window.updateCommunityMembers = function(members) {
+      // Merge current user into members list
+      const merged = [...members];
+      const existingIdx = merged.findIndex(m => m.name === currentUser.name && m.dept === currentUser.dept);
+      if (currentUser.name) {
+        const lastDayNum = currentUser.completedDays.length > 0 ? Math.max(...currentUser.completedDays) : 0;
+        const lastVerse = lastDayNum > 0 ? SCRIPTURES_DATA[lastDayNum - 1].ref : '-';
+        const userRecord = {
+          id: 'me',
+          name: currentUser.name + ' (나)',
+          dept: currentUser.dept,
+          completedDays: currentUser.completedDays,
+          lastVerse: lastVerse
+        };
+        if (existingIdx >= 0) {
+          merged[existingIdx] = userRecord;
+        } else {
+          merged.push(userRecord);
+        }
+      }
+      allMembersData = merged;
+      renderStatisticsView();
+    };
+
+    // Korean Chosung Decomposer
+    function getChosungString(str) {
+      const CHOSUNG = [
+        'ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ',
+        'ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'
+      ];
+      let result = '';
+      for (let i = 0; i < str.length; i++) {
+        const code = str.charCodeAt(i);
+        // Hangul Syllables 0xAC00 ~ 0xD7A3
+        if (code >= 0xAC00 && code <= 0xD7A3) {
+          const chosungIndex = Math.floor((code - 0xAC00) / (21 * 28));
+          result += CHOSUNG[chosungIndex];
+        } else {
+          result += str.charAt(i);
+        }
+      }
+      return result;
+    }
+
+    // Render current day's scripture according to active mode
+    function renderCurrentDayVerse() {
+      const data = SCRIPTURES_DATA[selectedDayIndex];
+      const dayNum = data.day;
+      const isToday = (selectedDayIndex === currentTodayIndex);
+      const isDone = currentUser.completedDays.includes(dayNum);
+
+      // Header tags
+      document.getElementById('currentDayBadge').innerText = `Day ${dayNum}`;
+      document.getElementById('currentDateDisplay').innerText = data.dateStr;
+      document.getElementById('verseTheme').innerText = data.theme;
+      document.getElementById('verseReference').innerText = data.ref;
+      document.getElementById('cardDayCounter').innerText = `${dayNum} / 48`;
+
+      // Today Indicator Badge
+      const todayBadge = document.getElementById('todayIndicatorBadge');
+      const card = document.getElementById('scriptureCard');
+      if (isToday) {
+        todayBadge.classList.remove('hidden');
+        todayBadge.classList.add('flex');
+        card.classList.add('glow-gold');
+      } else {
+        todayBadge.classList.add('hidden');
+        todayBadge.classList.remove('flex');
+        card.classList.remove('glow-gold');
+      }
+
+      // Completed Button state
+      const btnCompleted = document.getElementById('btnToggleCompleted');
+      const btnLabel = document.getElementById('btnCompletedLabel');
+      const statusText = document.getElementById('footerStatusText');
+
+      if (isDone) {
+        btnCompleted.className = "flex items-center space-x-1 px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold shadow transition active:scale-95";
+        btnLabel.innerText = "암송 완료됨 ✓";
+        statusText.innerHTML = `<span class="text-emerald-600 font-bold">✓ 말씀 암송을 완료하셨습니다. 은혜를 새겨보세요!</span>`;
+      } else {
+        btnCompleted.className = "flex items-center space-x-1 px-3.5 py-1.5 rounded-xl bg-eden-600 hover:bg-eden-700 text-white text-xs font-bold shadow transition active:scale-95";
+        btnLabel.innerText = "암송 완료하기";
+        statusText.innerText = "아직 암송 전입니다. 외운 후 완료 버튼을 눌러주세요.";
+      }
+
+      // Prev/Next Day buttons state
+      document.getElementById('btnPrevDay').disabled = (selectedDayIndex === 0);
+      document.getElementById('btnNextDay').disabled = (selectedDayIndex === SCRIPTURES_DATA.length - 1);
+
+      // Render Active Mode Content
+      renderModeContent(data);
+    }
+
+    function renderModeContent(data) {
+      // Hide all mode views
+      document.querySelectorAll('.mode-view').forEach(el => el.classList.add('hidden'));
+
+      if (activeMode === 'full') {
+        const fullView = document.getElementById('modeViewFull');
+        fullView.classList.remove('hidden');
+        document.getElementById('fullVerseText').innerText = data.text;
+      }
+      else if (activeMode === 'typing') {
+        const typingView = document.getElementById('modeViewTyping');
+        typingView.classList.remove('hidden');
+        const input = document.getElementById('typingInput');
+        input.value = '';
+        updateTypingComparison('');
+      }
+      else if (activeMode === 'chosung') {
+        const chosungView = document.getElementById('modeViewChosung');
+        chosungView.classList.remove('hidden');
+        document.getElementById('chosungVerseText').innerText = getChosungString(data.text);
+      }
+      else if (activeMode === 'blank') {
+        const blankView = document.getElementById('modeViewBlank');
+        blankView.classList.remove('hidden');
+        renderBlankWords(data.text);
+      }
+      else if (activeMode === 'cover') {
+        const coverView = document.getElementById('modeViewCover');
+        coverView.classList.remove('hidden');
+        const hiddenBox = document.getElementById('coverHiddenText');
+        const placeholder = document.getElementById('coverPlaceholder');
+        hiddenBox.innerText = data.text;
+        hiddenBox.classList.add('hidden');
+        placeholder.classList.remove('hidden');
+      }
+    }
+
+    // Blank Word Mode Logic
+    function renderBlankWords(text) {
+      const container = document.getElementById('blankVerseContainer');
+      container.innerHTML = '';
+
+      const words = text.split(' ');
+      words.forEach((word, index) => {
+        // Mask roughly every 2nd or 3rd word, prioritizing words longer than 1 char
+        const shouldMask = (index % 2 === 1 && word.length > 1);
+
+        if (!shouldMask) {
+          const span = document.createElement('span');
+          span.className = 'text-stone-800 py-0.5';
+          span.textContent = word + ' ';
+          container.appendChild(span);
+        } else {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'blank-card px-2.5 py-1 rounded-xl bg-stone-200 text-stone-400 font-bold border border-stone-300 hover:bg-stone-300 transition duration-150 inline-flex items-center justify-center';
+          btn.dataset.revealed = 'false';
+          btn.dataset.word = word;
+          btn.innerHTML = `<span class="opacity-60 text-xs">●●●</span>`;
+
+          btn.onclick = () => {
+            if (btn.dataset.revealed === 'false') {
+              btn.dataset.revealed = 'true';
+              btn.className = 'blank-card px-2 py-0.5 rounded-lg bg-eden-100 text-eden-900 font-bold border border-eden-300 shadow-sm transition duration-150';
+              btn.textContent = word;
+            } else {
+              btn.dataset.revealed = 'false';
+              btn.className = 'blank-card px-2.5 py-1 rounded-xl bg-stone-200 text-stone-400 font-bold border border-stone-300 hover:bg-stone-300 transition duration-150 inline-flex items-center justify-center';
+              btn.innerHTML = `<span class="opacity-60 text-xs">●●●</span>`;
+            }
+          };
+
+          container.appendChild(btn);
+          const spacer = document.createTextNode(' ');
+          container.appendChild(spacer);
+        }
+      });
+    }
+
+    // Typing practice comparison
+    function updateTypingComparison(userInput) {
+      const targetText = SCRIPTURES_DATA[selectedDayIndex].text;
+      const guideBox = document.getElementById('typingGuideBox');
+      const accuracyDisplay = document.getElementById('typingAccuracy');
+      
+      let html = '';
+      let correctCount = 0;
+      const inputLength = userInput.length;
+
+      for (let i = 0; i < targetText.length; i++) {
+        const targetChar = targetText[i];
+        if (i < inputLength) {
+          const userChar = userInput[i];
+          if (userChar === targetChar) {
+            correctCount++;
+            html += `<span class="typing-correct rounded px-0.5">${targetChar}</span>`;
+          } else {
+            html += `<span class="typing-incorrect rounded px-0.5">${targetChar}</span>`;
+          }
+        } else if (i === inputLength) {
+          html += `<span class="border-b-2 border-eden-600 bg-eden-50 px-0.5 font-bold">${targetChar}</span>`;
+        } else {
+          html += `<span class="typing-pending">${targetChar}</span>`;
+        }
+      }
+
+      guideBox.innerHTML = html;
+
+      // Accuracy calculation
+      if (inputLength === 0) {
+        accuracyDisplay.innerText = '정확도: 100%';
+        accuracyDisplay.className = 'text-eden-700 font-bold text-sm';
+      } else {
+        const accuracy = Math.round((correctCount / inputLength) * 100);
+        accuracyDisplay.innerText = `정확도: ${accuracy}% (${correctCount}/${inputLength})`;
+        if (accuracy >= 90) {
+          accuracyDisplay.className = 'text-emerald-700 font-bold text-sm';
+        } else {
+          accuracyDisplay.className = 'text-amber-700 font-bold text-sm';
+        }
+      }
+
+      // Completed typing milestone check
+      if (userInput.trim() === targetText.trim() && userInput.length >= targetText.length) {
+        showToast("구절을 완벽하게 타이핑하셨습니다! 할렐루야!", "check");
+      }
+    }
+
+    // Update Personal Progress Bar & Header Counters
+    function updateUserProgressUI() {
+      const completedCount = currentUser.completedDays.length;
+      const pct = Math.round((completedCount / 48) * 100);
+
+      document.getElementById('userCompletedCount').innerText = completedCount;
+      document.getElementById('userProgressPct').innerText = `${pct}%`;
+      document.getElementById('userProgressBar').style.width = `${pct}%`;
+      document.getElementById('headerNameTag').innerText = currentUser.name ? `${currentUser.name} 님` : '성도님';
+      document.getElementById('headerDeptTag').innerText = currentUser.dept || '물댄동산교회';
+    }
+
+    // Render 48-day schedule matrix grid
+    function renderDaysGrid(filter = 'all') {
+      const grid = document.getElementById('daysGridContainer');
+      grid.innerHTML = '';
+
+      SCRIPTURES_DATA.forEach((item, index) => {
+        const dayNum = item.day;
+        const isDone = currentUser.completedDays.includes(dayNum);
+        const isToday = (index === currentTodayIndex);
+        const isSelected = (index === selectedDayIndex);
+
+        // Filter condition
+        if (filter === 'done' && !isDone) return;
+        if (filter === 'yet' && isDone) return;
+
+        const cell = document.createElement('button');
+        cell.type = 'button';
+        
+        let baseStyle = "p-2 sm:p-2.5 rounded-2xl flex flex-col items-center justify-between text-left transition relative border ";
+        
+        if (isSelected) {
+          baseStyle += "ring-2 ring-eden-600 bg-eden-50 border-eden-400 font-bold ";
+        } else if (isDone) {
+          baseStyle += "bg-emerald-50/70 border-emerald-200 text-emerald-950 hover:bg-emerald-100/70 ";
+        } else {
+          baseStyle += "bg-white border-stone-200 hover:bg-stone-50 text-stone-700 ";
+        }
+
+        if (isToday) {
+          baseStyle += "shadow-md ring-1 ring-amber-400 ";
+        }
+
+        cell.className = baseStyle;
+
+        let iconMarkup = isDone 
+          ? `<i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600 font-black"></i>`
+          : `<span class="text-[10px] text-stone-400">Day</span>`;
+
+        let todayMarker = isToday 
+          ? `<span class="absolute -top-1.5 -right-1 text-[9px] px-1.5 py-0.2 rounded-full badge-today text-white font-bold shadow-sm">오늘</span>` 
+          : '';
+
+        cell.innerHTML = `
+          ${todayMarker}
+          <div class="w-full flex items-center justify-between">
+            <span class="text-xs font-black">${dayNum}</span>
+            ${iconMarkup}
+          </div>
+          <span class="text-[10px] text-stone-500 truncate w-full mt-1 font-normal">${item.ref}</span>
+        `;
+
+        cell.onclick = () => {
+          selectedDayIndex = index;
+          renderCurrentDayVerse();
+          renderDaysGrid(filter);
+          window.scrollTo({ top: 120, behavior: 'smooth' });
+        };
+
+        grid.appendChild(cell);
+      });
+
+      lucide.createIcons();
+    }
+
+    // Compute and render 4-tier statistics
+    function renderStatisticsView() {
+      if (!allMembersData || allMembersData.length === 0) return;
+
+      const totalUsers = allMembersData.length;
+      document.getElementById('statTotalUsers').innerText = `${totalUsers}명`;
+
+      // Overall average completion rate
+      let totalCompletedSum = 0;
+      allMembersData.forEach(m => {
+        totalCompletedSum += (m.completedDays ? m.completedDays.length : 0);
+      });
+      const avgDays = totalUsers > 0 ? (totalCompletedSum / totalUsers) : 0;
+      const overallAvgPct = Math.round((avgDays / 48) * 100);
+      document.getElementById('statAveragePct').innerText = `${overallAvgPct}%`;
+
+      // Department-level statistics
+      const deptStats = DEPARTMENTS.map(deptName => {
+        const members = allMembersData.filter(m => m.dept === deptName);
+        const count = members.length;
+        let sumDays = 0;
+        members.forEach(m => {
+          sumDays += (m.completedDays ? m.completedDays.length : 0);
+        });
+        const avg = count > 0 ? (sumDays / count) : 0;
+        const pct = Math.round((avg / 48) * 100);
+        return {
+          dept: deptName,
+          count: count,
+          avgDays: avg,
+          pct: pct
+        };
+      });
+
+      // Sort by avg percentage descending
+      deptStats.sort((a, b) => b.pct - a.pct || b.count - a.count);
+
+      const deptListContainer = document.getElementById('deptRankingsList');
+      deptListContainer.innerHTML = '';
+
+      deptStats.forEach((st, idx) => {
+        const isMyDept = (st.dept === currentUser.dept);
+        const rankBadge = idx === 0 
+          ? `<span class="w-5 h-5 rounded-full bg-amber-400 text-stone-900 flex items-center justify-center font-bold text-xs">1</span>`
+          : `<span class="w-5 h-5 rounded-full bg-stone-200 text-stone-600 flex items-center justify-center font-bold text-xs">${idx + 1}</span>`;
+
+        const row = document.createElement('div');
+        row.className = `p-3 rounded-2xl border transition ${isMyDept ? 'bg-eden-50/80 border-eden-300 ring-1 ring-eden-400' : 'bg-stone-50 border-stone-100'}`;
+        
+        row.innerHTML = `
+          <div class="flex items-center justify-between text-xs mb-1.5">
+            <div class="flex items-center space-x-2">
+              ${rankBadge}
+              <span class="font-bold text-stone-900">${st.dept}</span>
+              ${isMyDept ? '<span class="text-[10px] px-1.5 py-0.5 rounded bg-eden-200 text-eden-800 font-semibold">내 소속</span>' : ''}
+              <span class="text-stone-400">(${st.count}명 참여)</span>
+            </div>
+            <span class="font-extrabold text-eden-700">${st.pct}%</span>
+          </div>
+          <div class="w-full bg-stone-200/80 rounded-full h-2 overflow-hidden">
+            <div class="h-full bg-eden-600 rounded-full transition-all duration-300" style="width: ${st.pct}%"></div>
+          </div>
+        `;
+        deptListContainer.appendChild(row);
+      });
+
+      // My Department Personal Member Progress (Strictly only my department is displayed)
+      const myDeptTitle = document.getElementById('statMyDeptTitle');
+      const myDeptCount = document.getElementById('statMyDeptCount');
+      const myDeptContainer = document.getElementById('myDeptMembersList');
+
+      myDeptTitle.innerText = currentUser.dept;
+      const myMembers = allMembersData.filter(m => m.dept === currentUser.dept);
+      myDeptCount.innerText = `${myMembers.length}명`;
+      myDeptContainer.innerHTML = '';
+
+      if (myMembers.length === 0) {
+        myDeptContainer.innerHTML = `<p class="text-xs text-stone-400 py-3 text-center">아직 등록된 식구가 없습니다. 첫 번째로 암송을 시작해 보세요!</p>`;
+      } else {
+        // Sort my department members by completed days descending
+        myMembers.sort((a, b) => (b.completedDays?.length || 0) - (a.completedDays?.length || 0));
+
+        myMembers.forEach(mem => {
+          const completedCount = mem.completedDays ? mem.completedDays.length : 0;
+          const pct = Math.round((completedCount / 48) * 100);
+          const isMe = mem.name.includes('(나)') || mem.name === currentUser.name;
+
+          const card = document.createElement('div');
+          card.className = `p-3 rounded-2xl border flex items-center justify-between text-xs ${isMe ? 'bg-amber-50/70 border-amber-200' : 'bg-white border-stone-200'}`;
+
+          card.innerHTML = `
+            <div class="flex items-center space-x-2.5">
+              <div class="w-8 h-8 rounded-full ${isMe ? 'bg-amber-200 text-amber-900 font-bold' : 'bg-eden-100 text-eden-800'} flex items-center justify-center font-semibold text-xs">
+                ${mem.name.charAt(0)}
+              </div>
+              <div>
+                <p class="font-bold text-stone-900 flex items-center space-x-1">
+                  <span>${mem.name}</span>
+                  ${isMe ? '<span class="text-[10px] text-amber-700 bg-amber-200/80 px-1 rounded font-normal">본인</span>' : ''}
+                </p>
+                <p class="text-[11px] text-stone-400 mt-0.5">최근 완주: <span class="text-stone-600 font-medium">${mem.lastVerse || '시작 전'}</span></p>
+              </div>
+            </div>
+            <div class="text-right">
+              <div class="font-black text-sm text-eden-800">${pct}%</div>
+              <div class="text-[11px] text-stone-400">${completedCount} / 48일</div>
+            </div>
+          `;
+          myDeptContainer.appendChild(card);
+        });
+      }
+    }
+
+    // Text-to-Speech (TTS)
+    let isSpeaking = false;
+    function speakVerse() {
+      if (!('speechSynthesis' in window)) {
+        showToast("이 기기에서는 음성 읽기를 지원하지 않습니다.", "info");
+        return;
+      }
+
+      if (isSpeaking) {
+        window.speechSynthesis.cancel();
+        isSpeaking = false;
+        updateTTSButton(false);
+        return;
+      }
+
+      const verse = SCRIPTURES_DATA[selectedDayIndex];
+      const textToSpeak = `${verse.ref}. ${verse.text}`;
+
+      const utterance = new SpeechSynthesisUtterance(textToSpeak);
+      utterance.lang = 'ko-KR';
+      utterance.rate = 0.85; // gently paced for clear recitation
+      utterance.pitch = 1.0;
+
+      utterance.onstart = () => {
+        isSpeaking = true;
+        updateTTSButton(true);
+      };
+
+      utterance.onend = () => {
+        isSpeaking = false;
+        updateTTSButton(false);
+      };
+
+      utterance.onerror = () => {
+        isSpeaking = false;
+        updateTTSButton(false);
+      };
+
+      window.speechSynthesis.speak(utterance);
+    }
+
+    function updateTTSButton(speaking) {
+      const btnText = document.getElementById('ttsBtnText');
+      const icon = document.getElementById('ttsIcon');
+      if (speaking) {
+        btnText.innerText = "낭독 멈추기";
+        icon.classList.add('animate-bounce');
+      } else {
+        btnText.innerText = "낭독 듣기";
+        icon.classList.remove('animate-bounce');
+      }
+    }
+
+    // Copy to Clipboard (document.execCommand fallback compliant)
+    function copyVerseToClipboard() {
+      const verse = SCRIPTURES_DATA[selectedDayIndex];
+      const formatted = `[물댄동산교회 48일 말씀 암송]\nDay ${verse.day} (${verse.dateStr})\n주제: ${verse.theme}\n${verse.ref}\n\n"${verse.text}"`;
+
+      const tempTextArea = document.createElement("textarea");
+      tempTextArea.value = formatted;
+      tempTextArea.style.position = "fixed";
+      tempTextArea.style.left = "-9999px";
+      document.body.appendChild(tempTextArea);
+      tempTextArea.select();
+
+      try {
+        const successful = document.execCommand('copy');
+        if (successful) {
+          showToast("말씀이 클립보드에 복사되었습니다! 카톡 등에 공유해 보세요.", "check");
+        } else {
+          showToast("복사에 실패했습니다.", "info");
+        }
+      } catch (err) {
+        showToast("복사 중 오류가 발생했습니다.", "info");
+      } finally {
+        document.body.removeChild(tempTextArea);
+      }
+    }
+
+    // Toast Notification helper
+    let toastTimer = null;
+    function showToast(message, iconName = 'check') {
+      const toast = document.getElementById('toastBox');
+      const msg = document.getElementById('toastMessage');
+      const icon = document.getElementById('toastIcon');
+
+      msg.innerText = message;
+      if (iconName === 'check') {
+        icon.setAttribute('data-lucide', 'check-circle');
+      } else {
+        icon.setAttribute('data-lucide', 'info');
+      }
+      lucide.createIcons();
+
+      toast.classList.remove('opacity-0', 'translate-y-3', 'pointer-events-none');
+      toast.classList.add('opacity-100', 'translate-y-0');
+
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-3', 'pointer-events-none');
+        toast.classList.remove('opacity-100', 'translate-y-0');
+      }, 2600);
+    }
+
+    // Open Profile Setup Modal (Entrance or Edit)
+    function openProfileModal(isEntranceGate = false) {
+      const modal = document.getElementById('profileModal');
+      const modalTitle = document.getElementById('profileModalTitle');
+      const btnCancel = document.getElementById('btnCancelProfile');
+      const inputName = document.getElementById('inputUserName');
+      const errorNotice = document.getElementById('profileErrorNotice');
+
+      errorNotice.classList.add('hidden');
+      inputName.value = currentUser.name || '';
+
+      if (isEntranceGate) {
+        modalTitle.innerText = "성도 등록 및 입장";
+        btnCancel.classList.add('hidden');
+      } else {
+        modalTitle.innerText = "소속 및 프로필 변경";
+        btnCancel.classList.remove('hidden');
+      }
+
+      // Populate Department Radio buttons
+      const radioGroup = document.getElementById('deptRadioGroup');
+      radioGroup.innerHTML = '';
+      DEPARTMENTS.forEach(dept => {
+        const isChecked = (dept === currentUser.dept);
+        const label = document.createElement('label');
+        label.className = `cursor-pointer text-center p-2.5 rounded-xl border text-xs font-semibold transition ${
+          isChecked ? 'bg-eden-700 text-white border-eden-700 shadow-sm' : 'bg-stone-50 hover:bg-stone-100 text-stone-700 border-stone-200'
+        }`;
+        label.innerHTML = `
+          <input type="radio" name="deptChoice" value="${dept}" class="sr-only" ${isChecked ? 'checked' : ''}>
+          <span>${dept}</span>
+        `;
+        label.onclick = () => {
+          document.querySelectorAll('#deptRadioGroup label').forEach(l => {
+            l.className = 'cursor-pointer text-center p-2.5 rounded-xl border text-xs font-semibold transition bg-stone-50 hover:bg-stone-100 text-stone-700 border-stone-200';
+          });
+          label.className = 'cursor-pointer text-center p-2.5 rounded-xl border text-xs font-semibold transition bg-eden-700 text-white border-eden-700 shadow-sm';
+        };
+        radioGroup.appendChild(label);
+      });
+
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeProfileModal() {
+      const modal = document.getElementById('profileModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    // Save Profile
+    function saveProfile() {
+      const inputName = document.getElementById('inputUserName');
+      const selectedDeptRadio = document.querySelector('input[name="deptChoice"]:checked');
+      const errorNotice = document.getElementById('profileErrorNotice');
+
+      const nameVal = inputName.value.trim();
+      const deptVal = selectedDeptRadio ? selectedDeptRadio.value : '';
+
+      if (!nameVal || !deptVal) {
+        errorNotice.classList.remove('hidden');
+        return;
+      }
+
+      currentUser.name = nameVal;
+      currentUser.dept = deptVal;
+      saveUserProfileLocally();
+
+      if (window.syncUserDataToCloud) {
+        window.syncUserDataToCloud(currentUser);
+      }
+
+      closeProfileModal();
+      updateUserProgressUI();
+      window.updateCommunityMembers(allMembersData);
+      showToast(`반갑습니다, ${currentUser.name} 성도님!`, "check");
+    }
+
+    // Wire UI Elements
+    document.addEventListener('DOMContentLoaded', () => {
+      currentTodayIndex = calculateTodayDayIndex();
+      selectedDayIndex = currentTodayIndex;
+
+      // Check existing profile
+      const hasProfile = loadSavedUserProfile();
+
+      // Setup Modals
+      document.getElementById('btnSaveProfile').addEventListener('click', saveProfile);
+      document.getElementById('btnCancelProfile').addEventListener('click', closeProfileModal);
+      document.getElementById('btnOpenProfile').addEventListener('click', () => openProfileModal(false));
+
+      // Day Navigation
+      document.getElementById('btnPrevDay').addEventListener('click', () => {
+        if (selectedDayIndex > 0) {
+          selectedDayIndex--;
+          renderCurrentDayVerse();
+          renderDaysGrid();
+        }
+      });
+
+      document.getElementById('btnNextDay').addEventListener('click', () => {
+        if (selectedDayIndex < SCRIPTURES_DATA.length - 1) {
+          selectedDayIndex++;
+          renderCurrentDayVerse();
+          renderDaysGrid();
+        }
+      });
+
+      document.getElementById('btnGoToday').addEventListener('click', () => {
+        selectedDayIndex = currentTodayIndex;
+        renderCurrentDayVerse();
+        renderDaysGrid();
+        showToast("오늘의 암송 구절로 이동했습니다.", "check");
+      });
+
+      // Scripture Completion Toggle
+      document.getElementById('btnToggleCompleted').addEventListener('click', () => {
+        const dayNum = SCRIPTURES_DATA[selectedDayIndex].day;
+        const exists = currentUser.completedDays.indexOf(dayNum);
+
+        if (exists >= 0) {
+          currentUser.completedDays.splice(exists, 1);
+          showToast(`Day ${dayNum} 암송 완료를 취소했습니다.`, "info");
+        } else {
+          currentUser.completedDays.push(dayNum);
+          currentUser.completedDays.sort((a,b) => a - b);
+          showToast(`Day ${dayNum} 암송을 축하합니다! 은혜가 가득합니다.`, "check");
+        }
+
+        saveUserProfileLocally();
+        updateUserProgressUI();
+        renderCurrentDayVerse();
+        renderDaysGrid();
+        if (window.syncUserDataToCloud) {
+          window.syncUserDataToCloud(currentUser);
+        }
+        window.updateCommunityMembers(allMembersData);
+      });
+
+      // TTS and Copy
+      document.getElementById('btnTTS').addEventListener('click', speakVerse);
+      document.getElementById('btnCopyVerse').addEventListener('click', copyVerseToClipboard);
+
+      // Mode switching tabs
+      document.querySelectorAll('.mode-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          const mode = tab.dataset.mode;
+          activeMode = mode;
+
+          document.querySelectorAll('.mode-tab').forEach(t => {
+            t.className = 'mode-tab flex-1 min-w-[70px] py-2 px-2 rounded-xl text-center transition flex items-center justify-center space-x-1 hover:text-stone-900';
+          });
+          tab.className = 'mode-tab flex-1 min-w-[70px] py-2 px-2 rounded-xl text-center transition flex items-center justify-center space-x-1 bg-white text-eden-900 font-bold shadow-sm';
+
+          renderModeContent(SCRIPTURES_DATA[selectedDayIndex]);
+        });
+      });
+
+      // Typing input live listener
+      const typingInput = document.getElementById('typingInput');
+      typingInput.addEventListener('input', (e) => {
+        updateTypingComparison(e.target.value);
+      });
+      document.getElementById('btnResetTyping').addEventListener('click', () => {
+        typingInput.value = '';
+        updateTypingComparison('');
+        typingInput.focus();
+      });
+
+      // Blank mode toggle all
+      let allBlanksRevealed = false;
+      document.getElementById('btnToggleAllBlanks').addEventListener('click', () => {
+        const cards = document.querySelectorAll('.blank-card');
+        allBlanksRevealed = !allBlanksRevealed;
+        cards.forEach(card => {
+          if (allBlanksRevealed) {
+            card.dataset.revealed = 'true';
+            card.className = 'blank-card px-2 py-0.5 rounded-lg bg-eden-100 text-eden-900 font-bold border border-eden-300 shadow-sm transition duration-150';
+            card.textContent = card.dataset.word;
+          } else {
+            card.dataset.revealed = 'false';
+            card.className = 'blank-card px-2.5 py-1 rounded-xl bg-stone-200 text-stone-400 font-bold border border-stone-300 hover:bg-stone-300 transition duration-150 inline-flex items-center justify-center';
+            card.innerHTML = `<span class="opacity-60 text-xs">●●●</span>`;
+          }
+        });
+      });
+
+      // Cover mode tap reveal
+      document.getElementById('coverRevealCard').addEventListener('click', () => {
+        const hiddenBox = document.getElementById('coverHiddenText');
+        const placeholder = document.getElementById('coverPlaceholder');
+        if (hiddenBox.classList.contains('hidden')) {
+          hiddenBox.classList.remove('hidden');
+          placeholder.classList.add('hidden');
+        } else {
+          hiddenBox.classList.add('hidden');
+          placeholder.classList.remove('hidden');
+        }
+      });
+
+      // Filter Buttons in 48-day Schedule Grid
+      const fAll = document.getElementById('filterAll');
+      const fDone = document.getElementById('filterDone');
+      const fYet = document.getElementById('filterYet');
+
+      function setGridFilter(activeBtn, filterType) {
+        [fAll, fDone, fYet].forEach(b => {
+          b.className = 'px-2.5 py-1 rounded-lg hover:bg-stone-100 text-stone-600 transition';
+        });
+        activeBtn.className = 'px-2.5 py-1 rounded-lg bg-eden-100 text-eden-900 font-bold shadow-xs';
+        renderDaysGrid(filterType);
+      }
+
+      fAll.addEventListener('click', () => setGridFilter(fAll, 'all'));
+      fDone.addEventListener('click', () => setGridFilter(fDone, 'done'));
+      fYet.addEventListener('click', () => setGridFilter(fYet, 'yet'));
+
+      // Stats Modal Toggle
+      const statsModal = document.getElementById('statsModal');
+      document.getElementById('btnOpenStats').addEventListener('click', () => {
+        renderStatisticsView();
+        statsModal.classList.remove('hidden');
+        statsModal.classList.add('flex');
+      });
+      document.getElementById('btnCloseStats').addEventListener('click', () => {
+        statsModal.classList.add('hidden');
+        statsModal.classList.remove('flex');
+      });
+      document.getElementById('btnCloseStatsFooter').addEventListener('click', () => {
+        statsModal.classList.add('hidden');
+        statsModal.classList.remove('flex');
+      });
+
+      // Initial Render
+      updateUserProgressUI();
+      renderCurrentDayVerse();
+      renderDaysGrid('all');
+      lucide.createIcons();
+
+      // First Visit Gate Check
+      if (!hasProfile || !currentUser.name) {
+        setTimeout(() => {
+          openProfileModal(true);
+        }, 300);
+      }
+    });
+  </script>
+</body>
+</html>
+```
